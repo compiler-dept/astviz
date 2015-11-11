@@ -12,11 +12,12 @@
 
 
 from __future__ import print_function, division, absolute_import, unicode_literals
+
 from grako.parsing import graken, Parser
 from grako.util import re, RE_FLAGS
 
 
-__version__ = (2015, 6, 2, 19, 56, 12, 1)
+__version__ = (2015, 11, 11, 19, 32, 31, 2)
 
 __all__ = [
     'AstParser',
@@ -26,36 +27,100 @@ __all__ = [
 
 
 class AstParser(Parser):
-    def __init__(self, whitespace=None, nameguard=None, **kwargs):
+    def __init__(self,
+                 whitespace=None,
+                 nameguard=None,
+                 comments_re=None,
+                 eol_comments_re=None,
+                 ignorecase=None,
+                 left_recursion=True,
+                 **kwargs):
         super(AstParser, self).__init__(
             whitespace=whitespace,
             nameguard=nameguard,
-            comments_re=None,
-            eol_comments_re=None,
-            ignorecase=None,
+            comments_re=comments_re,
+            eol_comments_re=eol_comments_re,
+            ignorecase=ignorecase,
+            left_recursion=left_recursion,
             **kwargs
         )
 
     @graken()
+    def _identifier_(self):
+        self._pattern(r'#\w+')
+
+    @graken()
     def _node_(self):
         self._token('(')
+        with self._optional():
+            self._identifier_()
+            self.ast['id'] = self.last_node
         self._pattern(r'[^()]+')
-        self.ast['name'] = self.last_node
+        self.ast['label'] = self.last_node
 
-        def block1():
+        def block2():
             self._node_()
             self.ast.setlist('children', self.last_node)
-        self._closure(block1)
+        self._closure(block2)
         self._token(')')
 
         self.ast._define(
-            ['name'],
+            ['id', 'label'],
             ['children']
+        )
+
+    @graken()
+    def _edge_(self):
+        self._identifier_()
+        self.ast['src'] = self.last_node
+        self._token('to')
+        self._identifier_()
+        self.ast['dst'] = self.last_node
+        self._token(';')
+
+        self.ast._define(
+            ['src', 'dst'],
+            []
+        )
+
+    @graken()
+    def _ast_(self):
+        self._token('(')
+        with self._optional():
+            self._identifier_()
+            self.ast['id'] = self.last_node
+        self._pattern(r'[^()]+')
+        self.ast['label'] = self.last_node
+
+        def block2():
+            self._node_()
+            self.ast.setlist('children', self.last_node)
+        self._closure(block2)
+        self._token(')')
+
+
+        def block4():
+            self._edge_()
+            self.ast.setlist('edges', self.last_node)
+        self._closure(block4)
+
+        self.ast._define(
+            ['id', 'label'],
+            ['children', 'edges']
         )
 
 
 class AstSemantics(object):
+    def identifier(self, ast):
+        return ast
+
     def node(self, ast):
+        return ast
+
+    def edge(self, ast):
+        return ast
+
+    def ast(self, ast):
         return ast
 
 

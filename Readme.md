@@ -21,3 +21,7 @@ Add another two child nodes **D** and **E** to **B**:
 Node names may contain any character obviously excluding '(' and ')'.
 
 ``` (A(B(D)(Node names may contain any character excluding parenthesis!))(C)) ```
+
+Give nodes optional ids to add crossreferences:
+
+``` (#NodeA A(B(D)(#Text Node names may contain any character excluding parenthesis!))(#NodeC C)) #Text to #NodeC; #NodeC to #NodeA; ```
