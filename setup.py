@@ -9,7 +9,7 @@ config = {
     'url': 'http://github.com/compiler-dept/astviz',
     'download_url': 'https://github.com/compiler-dept/astviz/archive/master.zip',
     'author_email': 'code@heum.de',
-    'version': '0.1.1',
+    'version': '0.1.2',
     'install_requires': ['grako', 'graphviz'],
     'packages': ['astviz'],
     'package_data': {'astviz': ['Ast.ebnf']},

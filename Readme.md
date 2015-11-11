@@ -24,4 +24,8 @@ Node names may contain any character obviously excluding '(' and ')'.
 
 Give nodes optional ids to add crossreferences:
 
-``` (#NodeA A(B(D)(#Text Node names may contain any character excluding parenthesis!))(#NodeC C)) #Text to #NodeC; #NodeC to #NodeA; ```
+```
+(#NodeA A(B(D)(#Text Node names may contain any character excluding parenthesis!))(#NodeC C))
+#Text to #NodeC;
+#NodeC to #NodeA; 
+```
