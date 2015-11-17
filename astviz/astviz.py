@@ -11,7 +11,7 @@ def handle_node(node, graph, parent=None):
         name = node.id
     else:
         name = str(id(node.label))
-    graph.node(name, node.label)
+    graph.node(name, node.label, shape="rect", style="rounded")
     if parent:
         graph.edge(parent, name)
     for child in node.children:
